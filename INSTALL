@@ -1,0 +1,36 @@
+Installing svmgraph
+===================
+
+svmgraph generates images from a SDS/SVM configuration.
+
+To install the script, simply run the following commands
+(where x.xx is the current script version):
+
+    $ tar xvzf svmgraph-x.xx.tar.gz
+    $ cd svmgraph-x.xx
+    $ perl Makefile.PL
+
+and as root:
+
+    # make install
+
+If you are used to the CPAN way of doing things, the procedure is the
+same as always:
+
+    $ perl Makefile.PL
+    $ make
+    $ make test
+    # make install
+
+At your option, you may use the Build system which doesn't require the make(1)
+utility:
+
+    $ perl Build.PL
+    $ perl Build
+    $ perl Build test
+    $ su
+    # perl Build install
+
+This module requires four other modules: Solaris::Disk::SVM,
+Solaris::Disk::Partitions and Solaris::Disk::MountTable, and, obviously,
+GraphViz.

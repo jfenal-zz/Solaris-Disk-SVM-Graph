@@ -1,0 +1,8 @@
+Readme for svmgraph
+-------------------
+
+svmgraph uses Solaris::Disk::SVM and GraphViz to help one visualise 
+SDS/SVM disk configurations.
+
+This script requires four other modules:
+Solaris::Disk::VTOC, Solaris::Disk::Mnttab, Solaris::Disk::SVM and GraphViz.
