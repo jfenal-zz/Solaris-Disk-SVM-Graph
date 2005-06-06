@@ -7,7 +7,7 @@ use vars qw($AUTOLOAD %_properties);
 use Solaris::Disk::SVM;
 use GraphViz;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 NAME
 
@@ -398,7 +398,7 @@ Head to L<http://jfenal.free.fr/Solaris/> to see some sample graphics.
 
 =head1 VERSION
 
-This is version 0.02 of the L<Solaris::Disk::SVM::Graph> script.
+This is version 0.03 of the L<Solaris::Disk::SVM::Graph> script.
 
 =head1 COPYRIGHT
 

@@ -1,9 +1,12 @@
 0.01	dim sep 12 01:59:59 CEST 2004
 		Basic functionality
 
-0.02	FIXME
+0.02	sam jun  4 22:44:40 CEST 2005
 		Added a module to handle/hide all graph functionnality
 		Added parameters for font face, font size, etc.
-		Default output file name: toto.png
+		Default output file name: svm.png
 
-
+0.03    mar jun  7 01:14:42 CEST 2005
+        Completed test suite, especially increasing script testing
+        thanks to Test::Cmd
+        Simplified script code.

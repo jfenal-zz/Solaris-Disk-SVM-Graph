@@ -1,6 +1,6 @@
 ---
 name: Solaris-Disk-SVM-Graph
-version: 0.02
+version: 0.03
 author:
   - Jérôme Fenal <jfenal@free.fr>
 abstract: Graph your Solaris Volume Manager configurations
@@ -10,8 +10,10 @@ requires:
   Solaris::Disk::SVM: 0
 recommends:
   Paper::Specs: 0.06
+  Test::More: 0
+  Test::Output: 0
 provides:
   Solaris::Disk::SVM::Graph:
     file: lib/Solaris/Disk/SVM/Graph.pm
-    version: 0.02
+    version: 0.03
 generated_by: Module::Build version 0.261

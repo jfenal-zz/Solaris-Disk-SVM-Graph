@@ -3,24 +3,22 @@
 use strict;
 use warnings;
 use Getopt::Std;
+use Solaris::Disk::SVM;
 use Solaris::Disk::SVM::Graph;
 
-my $usepaperspecs;
+my $has_paperspecs;
+our $VERSION = '0.03';
 
 BEGIN {
-    $usepaperspecs=0;
+    $has_paperspecs=0;
     eval 'require Paper::Specs';
-    if (! $@) {
-        $usepaperspecs=1;
+    unless ($@) {
+        $has_paperspecs=1;
         import Paper::Specs units => 'in', brand => 'standard';
     }
 }
 
-# use Paper::Specs units => "cm";
-# my $form = Paper::Specs->find( code => "1234");
-# $form->sheet_size
-
-use vars qw( $opt_D $opt_h $opt_f $opt_o $opt_P $opt_O $opt_W $opt_H);
+use vars qw( $opt_D $opt_h $opt_f $opt_o $opt_P $opt_O $opt_W $opt_H $opt_v);
 
 =head1 NAME
 
@@ -28,7 +26,7 @@ svmgraph - Graph Solaris Volume Manager objects using GraphViz
 
 =head1 SYNOPSIS
 
-    svmgraph [-o outfile.png] [-f format] [-D datadir]  [objects]
+    svmgraph [-o outfile.png] [-f format] [-D datadir] [-O [h|v]] [objects] 
 
     svmgraph -D t/data          # creates svm.png
     smvgraph -o d100.png d100   # creates d100.png
@@ -57,13 +55,13 @@ The output file may be from one of the many output types in GraphViz.
 =cut
 
 sub say_usage {
-    my $version = Solaris::Disk::SVM::Graph->version;
+    my $version = $VERSION;
     my $svmv = Solaris::Disk::SVM->version;
     print STDERR "svmgraph by Jérôme Fenal\n";
     print STDERR "Version: $version, using Solaris::Disk::SVM $svmv\n";
     print STDERR "\n\t$0  [-D datadir] [ -o out.png ] [ objects ]\n\n";
     my $pspec = "  [-P paper]      : use paper (as A4 or Letter) size\n"
-      if $usepaperspecs;
+      if $has_paperspecs;
     print STDERR << "EOT";
 Options:
   [-o outputfile] : image file name, with optional extension (.png by default)
@@ -79,57 +77,50 @@ EOT
 }
 
 # Main
-my $opts='o:D:f:O:W:H:h';
-$opts .='P:' if $usepaperspecs;
+my $opts='o:D:f:O:W:H:hv';
+$opts .='P:' if $has_paperspecs;
 
 getopts($opts); # Sets opt_* as a side effect.
 
-my @objects = @_;
+if ($opt_v) {
+    use Solaris::Disk::SVM;
+    print "This is svmgraph $VERSION using Solaris::Disk::SVM $Solaris::Disk::SVM::VERSION\n";
+    exit 0;
+}
 
 say_usage() if $opt_h;
 
 my @orientation = ();
-@orientation = (orientation => 1) if defined $opt_O && $opt_O =~ m/[vp].*/;
-my ($xsize, $ysize);
+@orientation = ( orientation => 1 ) if defined $opt_O && $opt_O =~ m/[vp].*/;
 
-($xsize, $ysize) = Paper::Specs->find(brand => 'standard', code => $opt_P)
+my ( $width, $height );
+( $width, $height ) = Paper::Specs->find( brand => 'standard', code => $opt_P )
   if defined($opt_P);
-$xsize = $opt_W if defined $opt_W;
-$ysize = $opt_H if defined $opt_H;
-my @dimensions=();
-@dimensions = ( xsize => $xsize ) if $xsize;
-@dimensions = (@dimensions, ysize => $ysize) if $ysize;
+$width  = $opt_W if defined $opt_W;
+$height = $opt_H if defined $opt_H;
 
-my $svmg = Solaris::Disk::SVM::Graph->new(
-    defined( $opt_D ) ? (sourcedir => $opt_D) : (),
+my @dimensions = ();
+@dimensions = ( width => $width ) if $width;
+@dimensions = ( @dimensions, height => $height ) if $height;
+
+my $svmg =
+  Solaris::Disk::SVM::Graph->new(
+    defined($opt_D) ? ( sourcedir => $opt_D ) : (),
+  );
+
+die "Cannot read configuration"
+  if not defined $svmg;
+
+my @objects=();
+@objects = (objects => @ARGV)
+  if @ARGV;
+
+$svmg->output(
+    @dimensions, @orientation,
+    defined($opt_o) ? ( output => $opt_o ) : (),
+    defined($opt_f) ? ( format => $opt_f ) : (),
+    @objects
 );
-
-if (@ARGV) {
-    if ( defined $opt_o ) {
-        $svmg->output(
-            @dimensions,
-            @orientation,
-            output => $opt_o,
-            defined( $opt_f ) ? (format => $opt_f) : (),
-        );
-    } else {
-        foreach (@ARGV) {
-            $svmg->output(
-                @dimensions,
-                @orientation,
-                defined( $opt_f ) ? (format => $opt_f) : (),
-                objects => @objects,
-            );
-        }
-    }
-} else {
-    $svmg->output(
-        @dimensions,
-        @orientation,
-        defined( $opt_o ) ? (output => $opt_o) : (),
-        defined( $opt_f ) ? (format => $opt_f) : (),
-    );
-}
 
 exit 0;
 
@@ -145,7 +136,8 @@ Head to L<http://jfenal.free.fr/Solaris/> to see some sample graphics.
 
 =head1 VERSION
 
-This is version 0.02 of the F<svmgraph> script.
+This is version 0.03 of the F<svmgraph> script.
+
 
 =head1 COPYRIGHT
 

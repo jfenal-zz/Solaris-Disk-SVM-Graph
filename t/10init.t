@@ -16,4 +16,4 @@ plan tests => 2;
 my $svmg = Solaris::Disk::SVM::Graph->new( sourcedir => 't/data');
 
 isa_ok($svmg, 'Solaris::Disk::SVM::Graph', 'isa_ok');
-is($svmg->version, 0.02, "Version is ".$svmg->version);
+is($svmg->version, 0.03, "Version is ".$svmg->version);

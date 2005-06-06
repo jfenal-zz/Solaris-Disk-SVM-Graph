@@ -9,6 +9,8 @@ my $build = Module::Build->new(
         'Solaris::Disk::SVM' => '0',
     },
     recommends     => {
+        'Test::More'       => '0',
+        'Test::Output'       => '0',
         'Paper::Specs'       => '0.06',
     },
     add_to_cleanup     => [ '*~', '*/*~', '*/*/*/*~' ],
